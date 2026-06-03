@@ -3,578 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For Kairo Blaine | Oilove Liorae</title>
-    <!-- Fonts -->
+    <title>Tactical Support System v3.2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Caveat:wght@700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        pastelBlue: {
-                            50: '#F0F9FF',
-                            100: '#E0F2FE',
-                            200: '#BAE6FD',
-                            300: '#7DD3FC',
-                            400: '#38BDF8',
-                        },
-                        pastelOrange: {
-                            50: '#FFF7ED',
-                            100: '#FFEDD5',
-                            200: '#FED7AA',
-                            300: '#FDBA74',
-                            400: '#FB923C',
-                        }
-                    },
-                    fontFamily: {
-                        outfit: ['Outfit', 'sans-serif'],
-                        handwritten: ['Caveat', 'cursive'],
+                        pastelBlue: { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 300: '#7DD3FC', 400: '#38BDF8', 500: '#0EA5E9' },
+                        pastelOrange: { 50: '#FFF7ED', 100: '#FFEDD5', 200: '#FED7AA', 300: '#FDBA74', 400: '#FB923C' }
                     }
                 }
             }
         }
     </script>
-
     <style>
-        :root {
-            --pastel-blue: #BAE6FD;
-            --pastel-orange: #FED7AA;
-            --bg-cream: #FFF7ED;
-            --text-dark: #1E293B;
-            --text-muted: #64748B;
-        }
-
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-cream);
-            color: var(--text-dark);
-            height: 100dvh;
-            width: 100vw;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Slide Container */
-        .slide-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 480px; /* Perfect mobile width */
-            margin: 0 auto;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-            border-radius: 0px;
-        }
-
-        @media (min-width: 480px) {
-            .slide-wrapper {
-                border-radius: 30px;
-                height: 92dvh;
-                border: 6px solid white;
-            }
-        }
-
-        .slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-
-        /* Floating Blobs animation */
-        .blob {
-            position: absolute;
-            z-index: 0;
-            filter: blur(50px);
-            border-radius: 50%;
-            opacity: 0.4;
-            pointer-events: none;
-            animation: pulse-blob 8s infinite alternate;
-        }
-
-        @keyframes pulse-blob {
-            0% { transform: scale(1) translate(0px, 0px); }
-            100% { transform: scale(1.15) translate(10px, -15px); }
-        }
-
-        .blob-1 { width: 250px; height: 250px; background: var(--pastel-blue); top: -80px; left: -80px; }
-        .blob-2 { width: 250px; height: 250px; background: var(--pastel-orange); bottom: -80px; right: -80px; }
-
-        .content {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        /* Styled Polaroid Frame for photos */
-        .polaroid {
-            background: white;
-            padding: 10px 10px 20px 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            border: 1px solid #f1f5f9;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .polaroid:hover {
-            transform: rotate(0deg) scale(1.05);
-            z-index: 30;
-        }
-
-        /* Toast Alert styling */
-        #custom-toast {
-            position: absolute;
-            top: 25px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: rgba(15, 23, 42, 0.9);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 13px;
-            font-weight: 600;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-            white-space: nowrap;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        }
-        #custom-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Pulsing indicator for play button instruction */
-        .tap-instruction {
-            animation: pulse-glow 1.5s infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
-            50% { transform: scale(1.03); opacity: 1; box-shadow: 0 0 15px rgba(251, 146, 60, 0.4); }
-        }
+        body { font-family: 'Outfit', sans-serif; touch-action: pan-y; overflow-x: hidden; }
     </style>
 </head>
-<body>
+<body class="bg-[#FFF7ED] text-slate-800 antialiased selection:bg-pastelBlue-200">
 
-    <!-- Custom Toast Notification System -->
-    <div id="custom-toast">Notification Message</div>
+<div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative flex flex-col overflow-x-hidden">
 
-    <!-- Main Presentation Frame -->
-    <div class="slide-wrapper relative">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-
-        <!-- ================= SLIDE 1: PASSWORD GATEWAY ================= -->
-        <div class="slide flex" id="slide-1">
-            <div></div> <!-- Top Spacing spacer -->
-            <div class="content">
-                <span class="font-handwritten text-4xl text-pastelBlue-400 mb-2 block animate-pulse">Hello Kairo Blaine</span>
-                <h1 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight mb-4">I bet you know the password</h1>
-                
-                <div class="bg-pastelOrange-50/80 border border-pastelOrange-200 rounded-2xl p-4 mb-6 text-left max-w-sm w-full">
-                    <span class="text-xs font-bold text-pastelOrange-400 uppercase tracking-wider block mb-1">💡 Clue</span>
-                    <p class="text-slate-600 text-sm font-medium">The group we first met <span class="bg-pastelOrange-100 px-1.5 py-0.5 rounded text-orange-700 font-mono">o*******</span></p>
+    <!-- LOGIN SECTION -->
+    <section id="login-section" class="flex-grow flex flex-col justify-center items-center p-8 text-center bg-[#FFF7ED]">
+        <div class="w-full max-w-xs space-y-8">
+            <div class="space-y-4">
+                <div class="w-20 h-20 bg-white rounded-full mx-auto flex items-center justify-center shadow-sm border border-orange-100">
+                    <span class="text-3xl">✨</span>
                 </div>
-
-                <div class="w-full max-w-xs space-y-3">
-                    <input type="password" id="password-input" placeholder="Type password here..." 
-                           class="w-full px-5 py-4 rounded-2xl border-2 border-pastelBlue-200 bg-white/90 focus:outline-none focus:ring-2 focus:ring-pastelBlue-300 text-center font-bold text-slate-700 placeholder-slate-400 tracking-wide shadow-sm"
-                           onkeydown="if(event.key === 'Enter') checkPassword()">
-                    
-                    <button onclick="checkPassword()" class="w-full py-4 bg-gradient-to-r from-pastelBlue-400 to-pastelOrange-300 hover:from-pastelBlue-500 hover:to-pastelOrange-400 text-white font-bold rounded-2xl shadow-lg shadow-pastelBlue-200/50 active:scale-95 transition-all">
-                        Unlock Space <i class="fa-solid fa-lock-open ml-1.5"></i>
-                    </button>
+                <div class="space-y-1">
+                    <span class="font-['Caveat'] text-3xl text-pastelBlue-500 block">
+                        Hello, <span id="welcome-name">Who is this?</span>
+                    </span>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Are you Kairo or Oilove?</h2>
+                    <p class="text-xs text-slate-400">Input your name with her/him name as password </p>
                 </div>
             </div>
-            <div class="text-xs text-slate-400 font-medium pb-2">For my persib side ⚡</div>
-        </div>
 
-        <!-- ================= SLIDE 2: HELLO PAGE ================= -->
-        <div class="slide hidden opacity-0" id="slide-2">
-            <div></div>
-            <div class="content w-full">
-                <!-- Aesthetic Gif / Photo / Video Frame -->
-                <div class="polaroid w-64 mb-6">
-                    <div class="bg-slate-100 rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                        <img id="hello-gif" alt="Comforting Vibe" src="https://i.ibb.co.com/MDGdpbvK/patpatkai.gif" class="w-full h-full object-cover">
-                    </div>
-                </div>
+            <div class="space-y-3">
+                <input type="text" id="username" placeholder="Username" 
+                    class="w-full px-6 py-4 rounded-2xl border border-slate-100 bg-white/80 shadow-sm text-center font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-pastelBlue-200 transition-all">
                 
-                <h1 class="text-2xl font-extrabold text-slate-800 mb-3">Hi, this is Oilove Liorae speaking</h1>
-                <p class="text-slate-600 font-medium text-sm md:text-base max-w-sm px-2">
-                    I’ve noticed you’ve been feeling down since yesterday. Can I cheer you up?
-                </p>
+                <input type="password" id="password" placeholder="Password" 
+                    class="w-full px-6 py-4 rounded-2xl border border-slate-100 bg-white/80 shadow-sm text-center font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-pastelBlue-200 transition-all"
+                    onkeydown="if(event.key === 'Enter') authLogin()">
+                
+                <button onclick="authLogin()" 
+                    class="w-full py-4 bg-slate-800 text-white font-bold rounded-2xl shadow-lg active:scale-95 transition-all hover:bg-slate-700 text-sm tracking-wide">
+                    Let's Go!
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENU SECTION -->
+    <section id="menu-section" class="hidden flex-grow flex flex-col justify-center items-center p-8 text-center bg-[#FFF7ED]">
+        <div class="w-full max-w-xs space-y-6">
+            <div class="space-y-2">
+                <span class="font-['Caveat'] text-3xl text-pastelBlue-500 block">
+                    Welcome back<span id="welcome-name-menu">!</span> ✨
+                </span>
+                <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">What's the plan for today?</h2>
+                <p class="text-xs text-slate-400">Choose your current destination route</p>
+            </div>
+
+            <div class="grid gap-4">
+                <button onclick="openMessageStage()" 
+                    class="group p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all text-left flex items-center gap-4 active:scale-[0.98]">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">💌</div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Read Messages</p>
+                        <p class="text-[11px] text-slate-400">Deep thoughts & logs</p>
+                    </div>
+                </button>
+
+                <button onclick="openDistractingStage()" 
+                    class="group p-5 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-md transition-all text-left flex items-center gap-4 active:scale-[0.98]">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">🎮</div>
+                    <div>
+                        <p class="font-bold text-slate-800 text-sm">Mini Distracting</p>
+                        <p class="text-[11px] text-slate-400">Relaxing features & zone</p>
+                    </div>
+                </button>
             </div>
             
-            <!-- Navigation Buttons -->
-            <div class="flex gap-3 w-full max-w-xs justify-center pb-4">
-                <button onclick="handleBackValidation(2)" class="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 font-bold rounded-2xl transition-all active:scale-95 flex-1">
-                    Back
-                </button>
-                <button onclick="nextSlide(3)" class="px-6 py-3.5 bg-pastelBlue-400 hover:bg-pastelBlue-500 text-white font-bold rounded-2xl shadow-md transition-all active:scale-95 flex-1">
-                    Yes, please! <i class="fa-solid fa-face-smile ml-1"></i>
+            <div class="pt-4">
+                <button onclick="triggerFullReset()" class="text-[10px] font-bold text-slate-400 hover:text-rose-500 tracking-widest uppercase transition-colors">
+                    Logout Session
                 </button>
             </div>
         </div>
+    </section>
+</div>
 
-        <!-- ================= SLIDE 3: BOOST PAGE (3 CLICKS SYSTEM) ================= -->
-        <div class="slide hidden opacity-0" id="slide-3">
-            <div></div>
-            <div class="content w-full">
-                <div class="text-center mb-4">
-                    <h1 class="text-2xl font-extrabold text-slate-800 mb-1">Let's Lift You Up!</h1>
-                    <p class="text-slate-500 text-xs font-semibold">Tap the rocket 3 times to unlock your mood boosters!</p>
-                </div>
-
-                <!-- Progress Bar indicator -->
-                <div class="w-full max-w-xs bg-slate-100 h-2.5 rounded-full mb-6 overflow-hidden">
-                    <div id="boost-progress" class="bg-gradient-to-r from-pastelBlue-400 to-pastelOrange-400 h-full w-0 transition-all duration-300"></div>
-                </div>
-
-                <!-- Grid containing the 3 Polaroid photos (Hidden initially, uncovered one by one) -->
-                <div class="grid grid-cols-3 gap-2 w-full max-w-sm mb-6 px-1">
-                    
-                    <!-- Photo 1 -->
-                    <div id="boost-card-1" class="polaroid opacity-25 scale-90 pointer-events-none transform -rotate-3">
-                        <div class="bg-slate-100 rounded overflow-hidden aspect-[3/4]">
-                            <img alt="Boost 1" src="https://i.ibb.co.com/xtSqNd2d/hearts2hearts-ian.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-[9px] font-bold text-center text-slate-500 mt-1">who dares to mess with you?</p>
-                    </div>
-
-                    <!-- Photo 2 -->
-                    <div id="boost-card-2" class="polaroid opacity-25 scale-90 pointer-events-none transform rotate-3">
-                        <div class="bg-slate-100 rounded overflow-hidden aspect-[3/4]">
-                            <img alt="Boost 2" src="https://i.ibb.co.com/Kx2PtWBK/IAN-haerts2hearts.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-[9px] font-bold text-center text-slate-500 mt-1">biar i kasih paham!</p>
-                    </div>
-
-                    <!-- Photo 3 -->
-                    <div id="boost-card-3" class="polaroid opacity-25 scale-90 pointer-events-none transform -rotate-1">
-                        <div class="bg-slate-100 rounded overflow-hidden aspect-[3/4]">
-                            <img alt="Boost 3" src="https://i.ibb.co.com/xKQMxQrb/IAN-weverse-update-10.jpg" class="w-full h-full object-cover">
-                        </div>
-                        <p class="text-[9px] font-bold text-center text-slate-500 mt-1">tenang dek, ada the jak disini</p>
-                    </div>
-                </div>
-
-                <!-- Big Interactive Rocket Button -->
-                <div class="flex flex-col items-center">
-                    <button id="rocket-btn" onclick="doIncrementalBoost()" class="w-24 h-24 bg-gradient-to-tr from-pastelOrange-100 to-pastelOrange-200 hover:scale-105 border-4 border-white shadow-xl rounded-full text-4xl flex flex-col items-center justify-center animate-bounce transition-transform active:scale-90 focus:outline-none">
-                        <span>🚀</span>
-                        <span id="click-counter-label" class="text-[10px] font-bold text-orange-700 tracking-wider">TAP! (0/3)</span>
-                    </button>
-                    <p id="boost-message" class="text-slate-600 text-xs font-bold mt-4 italic min-h-[16px]">Tap to reveal cheer #1</p>
-                </div>
-            </div>
-
-            <!-- Navigation Buttons -->
-            <div class="flex gap-3 w-full max-w-xs justify-center pb-4">
-                <button onclick="handleBackValidation(3)" class="px-6 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 font-bold rounded-2xl transition-all active:scale-95 flex-1">
-                    Back
-                </button>
-                <button id="boost-next-btn" onclick="nextSlide(4)" class="px-6 py-3.5 bg-pastelBlue-400 opacity-40 pointer-events-none text-white font-bold rounded-2xl shadow-md transition-all active:scale-95 flex-1">
-                    Next <i class="fa-solid fa-arrow-right ml-1"></i>
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= SLIDE 4: MUSIC SELECTION ================= -->
-        <div class="slide hidden opacity-0" id="slide-4">
-            <div></div>
-            <div class="content w-full">
-                <span class="text-xs font-bold text-pastelOrange-400 uppercase tracking-widest mb-1">Music Therapy</span>
-                <h1 class="text-xl font-extrabold text-slate-800 mb-6">Pick one you want to listen with..</h1>
-                
-                <!-- Songs List Container -->
-                <div class="space-y-2.5 w-full max-h-[350px] overflow-y-auto px-1">
-                    <!-- Oasis -->
-                    <div onclick="playMusic('Oasis - Wonderwall', 'https://open.spotify.com/embed/track/41tTCXOzxSWAoVrfeIIh8x?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelBlue-100 flex items-center justify-center text-pastelBlue-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">Wonderwall</span>
-                            <span class="text-[11px] font-semibold text-slate-400">Oasis</span>
-                        </div>
-                    </div>
-                    <!-- LANY -->
-                    <div onclick="playMusic('LANY - YOU!', 'https://open.spotify.com/embed/track/1vg0ZHaTvBwlNxLxyYrEvP?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelOrange-100 flex items-center justify-center text-pastelOrange-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">YOU!</span>
-                            <span class="text-[11px] font-semibold text-slate-400">LANY</span>
-                        </div>
-                    </div>
-                    <!-- Daniel Caesar -->
-                    <div onclick="playMusic('Daniel Caesar - Best Part', 'https://open.spotify.com/embed/track/1Q7EgiMOuwDcB0PJC6AzON?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelBlue-100 flex items-center justify-center text-pastelBlue-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">Best Part</span>
-                            <span class="text-[11px] font-semibold text-slate-400">Daniel Caesar ft. H.E.R.</span>
-                        </div>
-                    </div>
-                    <!-- HIVI! -->
-                    <div onclick="playMusic('HIVI! - Pelangi', 'https://open.spotify.com/embed/track/3ZwqWrRpylU9nfy99qwKdR?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelOrange-100 flex items-center justify-center text-pastelOrange-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">Pelangi</span>
-                            <span class="text-[11px] font-semibold text-slate-400">HIVI!</span>
-                        </div>
-                    </div>
-                    <!-- Keshi -->
-                    <div onclick="playMusic('Keshi - Understand', 'https://open.spotify.com/embed/track/72sfmdpuO5r8cBDgs7MqZZ?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelBlue-100 flex items-center justify-center text-pastelBlue-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">Understand</span>
-                            <span class="text-[11px] font-semibold text-slate-400">Keshi</span>
-                        </div>
-                    </div>
-                    <!-- Mario A -->
-                    <div onclick="playMusic('Mario A - Wanting You Is Not A Crime', 'https://open.spotify.com/embed/track/3BoXBghMo3IMgNIayWG9Lm?utm_source=generator')" 
-                         class="bg-white hover:bg-pastelBlue-50 border border-slate-100 hover:border-pastelBlue-200 rounded-2xl p-3.5 flex items-center gap-4 transition-all cursor-pointer shadow-xs active:scale-[0.98]">
-                        <div class="w-10 h-10 rounded-xl bg-pastelOrange-100 flex items-center justify-center text-pastelOrange-400"><i class="fa-solid fa-music"></i></div>
-                        <div class="text-left flex-1">
-                            <span class="block text-sm font-bold text-slate-700 leading-none mb-1">Wanting You Is Not A Crime</span>
-                            <span class="text-[11px] font-semibold text-slate-400">Mario A</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex w-full max-w-xs justify-center pb-4">
-                <button onclick="nextSlide(3)" class="px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold rounded-2xl transition-all active:scale-95 w-full">
-                    Back
-                </button>
-            </div>
-        </div>
-
-        <!-- ================= SLIDE 5: FINAL LETTER ================= -->
-        <div class="slide hidden opacity-0" id="slide-5">
-            <!-- Scrollable Content Box -->
-            <div class="w-full overflow-y-auto px-1 flex-grow scroll-smooth" style="max-height: calc(100% - 30px);">
-                
-                <!-- Spotify Player Container (dynamically loaded) -->
-                <div id="player-container" class="w-full mt-2 mb-5 z-10 hidden">
-                    <iframe id="spotify-player" data-testid="embed-iframe" style="border-radius:12px" src="" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" class="shadow-md"></iframe>
-                </div>
-
-                <!-- Letter Content -->
-                <div class="text-left space-y-4 text-slate-600 font-medium text-[13px] md:text-[14px] leading-relaxed bg-white/65 p-4 rounded-2xl border border-slate-100 mb-6">
-                    <p>i know everything might feel so heavy right now, and it’s totally fine kalau you belum bisa cerita sama i. seriously, no pressure at all. i don’t need to know the details to know that you’re dealing with something big, and i highly respect your space.</p>
-                    <p>tapi i just want you to know, whatever it is that you're going through, please don't lose your spark, okay? i sebenernya bingung mau semangatin you kayak gimana but ik you’ve survived so many bad days before, and i’m pretty sure you’re gonna get through this one too. take your time, rest as much as you need, but please don't give up!</p>
-                    <p>remember, you don’t have to carry the weight of the world alone. kalau nanti you udah ready buat cerita, i’m here. tapi kalau sekarang cuma mau ditemenin like dengerin lagu bareng atau nonton ya ayo. you're doing great, and i'm always rooting for you.</p>
-                    
-                    <span class="font-handwritten text-3xl text-pastelOrange-400 block mt-4 text-right">with love, Oilove Liorae.</span>
-                </div>
-
-                <!-- Photos Grid Section -->
-                <div class="space-y-4 pb-4">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Pemanis aja sih ngehhehe</h3>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        
-                        <!-- Photo 1 -->
-                        <div class="polaroid bg-white">
-                            <div class="bg-slate-100 rounded-md overflow-hidden aspect-square">
-                                <img alt="Memory 1" src="https://i.ibb.co.com/hFdhfBzv/keonsunii.jpg" class="w-full h-full object-cover">
-                            </div>
-                        </div>
-
-                        <!-- Photo 2 -->
-                        <div class="polaroid bg-white" style="transform: rotate(3deg);">
-                            <div class="bg-slate-100 rounded-md overflow-hidden aspect-square">
-                                <img alt="Memory 2" src="https://i.ibb.co.com/0pspwjWz/not-mine.jpg" class="w-full h-full object-cover">
-                            </div>
-                        </div>
-
-                        <!-- Photo 3 -->
-                        <div class="polaroid bg-white" style="transform: rotate(-1deg);">
-                            <div class="bg-slate-100 rounded-md overflow-hidden aspect-square">
-                                <img alt="Memory 3" src="https://i.ibb.co.com/hJXDwh6z/download-2026-05-22-T212832-364.jpg" class="w-full h-full object-cover">
-                            </div>
-                        </div>
-
-                        <!-- Photo 4 -->
-                        <div class="polaroid bg-white" style="transform: rotate(2deg);">
-                            <div class="bg-slate-100 rounded-md overflow-hidden aspect-square">
-                                <img alt="Memory 4" src="https://i.ibb.co.com/YFSBD6Z9/download-2026-05-22-T213531-307.jpg" class="w-full h-full object-cover">
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <!-- Simple Footer Playful Info -->
-            <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider py-2">
-                Keep Smiling, Kairo! ✨
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= JAVASCRIPT LOGIC ================= -->
-    <script>
-        let currentSlide = 1;
-        let boostClicks = 0;
-
-        // Custom Toast Notification System
-        function showToast(message) {
-            const toast = document.getElementById('custom-toast');
-            toast.innerText = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        // Slide navigation controller
-        function nextSlide(slideNum) {
-            const current = document.getElementById(`slide-${currentSlide}`);
-            current.classList.add('opacity-0');
-            
-            setTimeout(() => {
-                current.classList.add('hidden');
-                
-                const next = document.getElementById(`slide-${slideNum}`);
-                next.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    next.classList.remove('opacity-0');
-                    currentSlide = slideNum;
-                }, 50);
-            }, 450);
-        }
-
-        // Password verification logic
-        function checkPassword() {
-            const pwInput = document.getElementById('password-input');
-            const pw = pwInput.value.trim().toLowerCase();
-
-            if (pw === 'otsaruse') {
-                confetti({
-                    particleCount: 150,
-                    spread: 80,
-                    origin: { y: 0.6 },
-                    colors: ['#38BDF8', '#FB923C', '#FED7AA', '#BAE6FD']
-                });
-                nextSlide(2);
-            } else {
-                showToast("Password salah! Coba inget-inget lagi... 😉");
-                pwInput.value = '';
-                pwInput.classList.add('border-red-400');
-                setTimeout(() => pwInput.classList.remove('border-red-400'), 1500);
-            }
-        }
-
-        // Back button funny validation quotes
-        function handleBackValidation(page) {
-            if (page === 2) {
-                showToast("no back to the past ya! 😜");
-            } else if (page === 3) {
-                showToast("sebaik baiknya kembali, jangan ke masa lalu ngahahah 🤭");
-            }
-        }
-
-        // Incremental 3-Click Boost trigger logic
-        function doIncrementalBoost() {
-            if (boostClicks < 3) {
-                boostClicks++;
-                
-                // Update Progress bar & labels
-                const percentage = (boostClicks / 3) * 100;
-                document.getElementById('boost-progress').style.width = `${percentage}%`;
-                document.getElementById('click-counter-label').innerText = `TAP! (${boostClicks}/3)`;
-
-                // Handle step actions
-                if (boostClicks === 1) {
-                    const card1 = document.getElementById('boost-card-1');
-                    card1.classList.remove('opacity-25', 'scale-90');
-                    card1.classList.add('scale-100', 'shadow-xl', 'border-pastelBlue-300');
-                    document.getElementById('boost-message').innerText = "Cheer #1 Unlocked! Tap again! ✨";
-                    confetti({ particleCount: 40, spread: 45, colors: ['#BAE6FD'] });
-                } 
-                else if (boostClicks === 2) {
-                    const card2 = document.getElementById('boost-card-2');
-                    card2.classList.remove('opacity-25', 'scale-90');
-                    card2.classList.add('scale-100', 'shadow-xl', 'border-pastelOrange-300');
-                    document.getElementById('boost-message').innerText = "Cheer #2 Unlocked! One more tap! 🔥";
-                    confetti({ particleCount: 40, spread: 55, colors: ['#FED7AA'] });
-                } 
-                else if (boostClicks === 3) {
-                    const card3 = document.getElementById('boost-card-3');
-                    card3.classList.remove('opacity-25', 'scale-90');
-                    card3.classList.add('scale-100', 'shadow-xl', 'border-pastelBlue-300');
-                    
-                    document.getElementById('boost-message').innerText = "Triple Boost Complete! Looking cool! 🎉";
-                    document.getElementById('rocket-btn').classList.remove('animate-bounce');
-                    document.getElementById('rocket-btn').classList.add('opacity-70', 'pointer-events-none');
-                    
-                    // Activate Next button
-                    const nextBtn = document.getElementById('boost-next-btn');
-                    nextBtn.classList.remove('opacity-40', 'pointer-events-none');
-
-                    // Massive celebratory confetti shower
-                    confetti({
-                        particleCount: 150,
-                        spread: 80,
-                        origin: { y: 0.6 }
-                    });
-                }
-            }
-        }
-
-        // Play Selected Spotify track and auto slide
-        function playMusic(songTitle, embedUrl) {
-            // Load Spotify Widget
-            const player = document.getElementById('spotify-player');
-            player.src = embedUrl;
-            document.getElementById('player-container').classList.remove('hidden');
-
-            showToast(`Membuka: ${songTitle} 🎵`);
-
-            // Auto transition to Final Letter slide
-            setTimeout(() => {
-                nextSlide(5);
-            }, 1000);
-        }
-    </script>
+<script src="supabase.js"></script>
+<script src="auth.js"></script>
 </body>
 </html>
